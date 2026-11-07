@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build / coverage
+backend/dist/
+backend/coverage/
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+# Config.xcconfig holds only the local API base URL (no secrets) and is committed
+# so reviewers can open the Xcode project without an extra copy step.
+# Override locally if needed; see Config.xcconfig.example.
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Xcode
+**/xcuserdata/
+**/DerivedData/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.swiftpm/
+Package.resolved
+.build/
+
+# Logs
+*.log
+npm-debug.log*

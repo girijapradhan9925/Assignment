@@ -1,0 +1,65 @@
+# AI usage notes
+
+## Tools and models
+
+- **Cursor** (Agent mode) with Composer for planning and implementation
+- No separate Claude Code / Copilot session for this submission
+
+## Agent instruction files
+
+Committed to the repo:
+
+- [`AGENTS.md`](AGENTS.md) — standing instructions for agents working in this repository (stack, seams, do-nots)
+
+## Plan / spec
+
+A written plan was produced before implementation covering:
+
+- Stack choice (SwiftUI iOS + Node.js/TypeScript)
+- Ports-and-adapters architecture for product source, look-and-feel, and email
+- Stable API contract (so Fake Store shape never reaches the client)
+- Assumptions on ranking, search, category split, and console email
+- File layout for `backend/` and `ios/`
+- Test strategy (vitest + Swift Testing against stubs)
+
+## Key prompts / moments that shaped the solution
+
+1. **“Implement the assignment; choose stack and record assumptions.”**  
+   Drove the plan: iOS + Node, computed top-rated, console email, no Docker.
+
+2. **“Do not call Fake Store from the client; foundation must grow.”**  
+   Locked in `ProductRepository` / `EmailProvider` ports and a mapper that renames `image` → `imageUrl`.
+
+3. **“Keep search behind an explicit Search action, not live-as-you-type.”**  
+   Matched the acceptance criteria; filtering stays on the backend.
+
+4. **“Default email to something reviewers can run with zero accounts.”**  
+   Chose console provider with optional SMTP; SES left as a later AWS seam.
+
+5. **“Theme tokens and shared components for look-and-feel.”**  
+   Feature screens compose `Theme` / `ProductTile` so branding can change without rewriting the catalogue flow.
+
+## Time spent
+
+Approximately **3 hours** wall-clock for the PoC (within the brief’s 2–3 hour time-box), split roughly as:
+
+| Phase | Time | Notes |
+| --- | --- | --- |
+| Planning | ~35 min | Stack choice, ports, assumptions, file layout |
+| Building | ~1 h 45 min | Backend API + iOS features (browse → enquire) |
+| Testing | ~25 min | Backend vitest; iOS ViewModel tests in Xcode |
+| Reviewing / docs | ~15 min | Review of AI output; DECISIONS / AI_USAGE / README |
+
+## Where the AI got something wrong (and how it was caught)
+
+1. **URL construction in `APIClient`**  
+   An early draft mixed `appendingPathComponent` with a discarded `URLComponents` assignment. Caught on review; rewritten to join base path + endpoint path via `URLComponents` only.
+
+2. **Config.xcconfig location**  
+   First draft put `Config.xcconfig` inside the synchronized `Catalogue/` group *and* referenced it from the project root, which would confuse membership. Caught while writing the project file; config now lives next to the `.xcodeproj`, with Info.plist still inside the app folder.
+
+3. **Nested `navigationDestination` recursion**  
+   An early `RootView` recursively attached destinations per pushed screen. Simplified to one destination closure per `NavigationStack` so category → product → enquire pushes stay on the same stack.
+
+4. **Category slug vs display name**  
+   An early path used raw Fake Store category strings (spaces / apostrophes) in URLs. Caught when wiring navigation; slugify on the backend and keep the original string for display.
