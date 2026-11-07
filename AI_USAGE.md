@@ -38,7 +38,20 @@ A written plan was produced before implementation covering:
    README / DECISIONS written as the finished submission narrative.
 
 5. **“Code only — no git remote / PR setup.”**  
-   Agent left repository hosting and the open PR to the author.
+   Initially deferred hosting/PR; submission gaps (README, time spent, open PR) were closed in a follow-up pass on a feature branch.
+
+## Time spent
+
+Approximately **3 hours** wall-clock for the PoC (within the brief’s 2–3 hour time-box), split roughly as:
+
+| Phase | Time | Notes |
+| --- | --- | --- |
+| Planning | ~35 min | Stack choice, ports, assumptions, file layout |
+| Building | ~1 h 45 min | Backend API + iOS features (browse → enquire) |
+| Testing | ~25 min | Backend vitest; iOS ViewModel tests in Xcode |
+| Reviewing / docs | ~15 min | Static review of AI output; DECISIONS / AI_USAGE |
+
+A short follow-up later added the missing README, recorded this split, and opened the assessment PR.
 
 ## Where the AI got something wrong (and how it was caught)
 
