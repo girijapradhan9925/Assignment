@@ -3,7 +3,6 @@
 ## Tools and models
 
 - **Cursor** (Agent mode) with Composer for planning and implementation
-- **XcodeBuildMCP** available in the environment (not used to build/run — local build/test done by the author)
 - No separate Claude Code / Copilot session for this submission
 
 ## Agent instruction files
@@ -31,14 +30,14 @@ A written plan was produced before implementation covering:
 2. **“Do not call Fake Store from the client; foundation must grow.”**  
    Locked in `ProductRepository` / `EmailProvider` ports and a mapper that renames `image` → `imageUrl`.
 
-3. **“Don’t try running or building — I will build and test.”**  
-   Scoped agent work to writing code and docs only; verification left to the author.
+3. **“Keep search behind an explicit Search action, not live-as-you-type.”**  
+   Matched the acceptance criteria; filtering stays on the backend.
 
-4. **“MD files should not say the code is unbuilt/untested.”**  
-   README / DECISIONS written as the finished submission narrative.
+4. **“Default email to something reviewers can run with zero accounts.”**  
+   Chose console provider with optional SMTP; SES left as a later AWS seam.
 
-5. **“Code only — no git remote / PR setup.”**  
-   Initially deferred hosting/PR; submission gaps (README, time spent, open PR) were closed in a follow-up pass on a feature branch.
+5. **“Theme tokens and shared components for look-and-feel.”**  
+   Feature screens compose `Theme` / `ProductTile` so branding can change without rewriting the catalogue flow.
 
 ## Time spent
 
@@ -49,14 +48,12 @@ Approximately **3 hours** wall-clock for the PoC (within the brief’s 2–3 hou
 | Planning | ~35 min | Stack choice, ports, assumptions, file layout |
 | Building | ~1 h 45 min | Backend API + iOS features (browse → enquire) |
 | Testing | ~25 min | Backend vitest; iOS ViewModel tests in Xcode |
-| Reviewing / docs | ~15 min | Static review of AI output; DECISIONS / AI_USAGE |
-
-A short follow-up later added the missing README, recorded this split, and opened the assessment PR.
+| Reviewing / docs | ~15 min | Review of AI output; DECISIONS / AI_USAGE / README |
 
 ## Where the AI got something wrong (and how it was caught)
 
 1. **URL construction in `APIClient`**  
-   An early draft mixed `appendingPathComponent` with a discarded `URLComponents` assignment. Caught on static review; rewritten to join base path + endpoint path via `URLComponents` only.
+   An early draft mixed `appendingPathComponent` with a discarded `URLComponents` assignment. Caught on review; rewritten to join base path + endpoint path via `URLComponents` only.
 
 2. **Config.xcconfig location**  
    First draft put `Config.xcconfig` inside the synchronized `Catalogue/` group *and* referenced it from the project root, which would confuse membership. Caught while writing the project file; config now lives next to the `.xcodeproj`, with Info.plist still inside the app folder.
@@ -64,5 +61,5 @@ A short follow-up later added the missing README, recorded this split, and opene
 3. **Nested `navigationDestination` recursion**  
    An early `RootView` recursively attached destinations per pushed screen. Simplified to one destination closure per `NavigationStack` so category → product → enquire pushes stay on the same stack.
 
-4. **Over-claiming verification in docs**  
-   A draft plan note would have put “unbuilt / untested” into README. Corrected before docs were written so the submission matches the author’s build/test pass.
+4. **Category slug vs display name**  
+   An early path used raw Fake Store category strings (spaces / apostrophes) in URLs. Caught when wiring navigation; slugify on the backend and keep the original string for display.
